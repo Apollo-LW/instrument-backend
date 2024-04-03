@@ -9,13 +9,22 @@ export class Group {
     name: string;
 
     @Prop()
-    creationDate: string;
-
-    @Prop() 
-    admin: string;
+    createdAt: string; // TODO: change it to date
 
     @Prop()
-    memebrs: string
+    lastUpdate: string; // TODO: change it to date
+
+    @Prop({type: Array<string>}) 
+    ownersIds: Array<string>;
+
+    @Prop({type: Array<string>})
+    memebrsIds: Array<string>;
+
+    @Prop({type: Array<string>})
+    subGroupsIds: Array<string>;
+
+    @Prop({type: Array<string>})
+    parentGroupsIds: Array<string>;
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
