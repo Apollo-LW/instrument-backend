@@ -9,37 +9,22 @@ export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 
   @Post()
-  postAsset(@Body() body: Asset) {
-    return this.assetService.createAsset(body);
+  create(@Body() asset: Asset) {
+    return this.assetService.create(asset);
   }
 
-  @Get()
-  getAllAssets() {
-    return this.assetService.getAllAssets();
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.assetService.findOne(+id);
   }
 
-  // @Post()
-  // create(@Body() createAssetDto: CreateAssetDto) {
-  //   return this.assetService.create(createAssetDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() asset: Asset) {
+    return this.assetService.update(+id, asset);
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.assetService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.assetService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAssetDto: UpdateAssetDto) {
-  //   return this.assetService.update(+id, updateAssetDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.assetService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.assetService.remove(+id);
+  }
 }

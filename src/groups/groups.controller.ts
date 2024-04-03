@@ -9,37 +9,22 @@ export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
   @Post()
-  postNote(@Body() body: Group) {
-    return this.groupsService.cretaeGroup(body);
+  create(@Body() group: Group) {
+    return this.groupsService.create(group);
   }
 
-  @Get()
-  getAllNotes() {
-    return this.groupsService.getAllGroups();
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.groupsService.findOne(+id);
   }
 
-  // @Post()
-  // create(@Body() createGroupDto: CreateGroupDto) {
-  //   return this.groupsService.create(createGroupDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() group: Group) {
+    return this.groupsService.update(+id, group);
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.groupsService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.groupsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
-  //   return this.groupsService.update(+id, updateGroupDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.groupsService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.groupsService.remove(+id);
+  }
 }

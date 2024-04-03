@@ -9,38 +9,22 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Post()
-  postCourse(@Body() body: Course) {
-    return this.coursesService.createCourse(body);
+  create(@Body() course: Course) {
+    return this.coursesService.create(course);
   }
 
-  @Get()
-  getAllCourse() {
-    return this.coursesService.getAllCourse();
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.coursesService.findOne(+id);
   }
 
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() course: Course) {
+    return this.coursesService.update(+id, course);
+  }
 
-  // @Post()
-  // create(@Body() createCourseDto: CreateCourseDto) {
-  //   return this.coursesService.create(createCourseDto);
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.coursesService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.coursesService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-  //   return this.coursesService.update(+id, updateCourseDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.coursesService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.coursesService.remove(+id);
+  }
 }
