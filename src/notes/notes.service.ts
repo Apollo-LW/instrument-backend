@@ -10,32 +10,20 @@ export class NotesService {
 
   constructor(@InjectModel(Note.name) private readonly note: Model<Note>){};
 
-  async createNote(body: Note): Promise<Note> {
+  async create(body: Note): Promise<Note> {
     const createNote = new this.note(body);
     return createNote.save();
   }
 
-  async getAllNotes() {
-    return this.note.find().exec();
+  async findOne(id: number): Promise<Note> {
+    return this.note.findById(id);
   }
 
-  // create(createNoteDto: CreateNoteDto) {
-  //   return 'This action adds a new note';
-  // }
+  async update(id: number, note: Note): Promise<boolean> {
+    return this.note.findByIdAndUpdate(id, note, {new: true});
+  }
 
-  // findAll() {
-  //   return `This action returns all notes`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} note`;
-  // }
-
-  // update(id: number, updateNoteDto: UpdateNoteDto) {
-  //   return `This action updates a #${id} note`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} note`;
-  // }
+  async remove(id: number): Promise<boolean> {
+    return this.note.findByIdAndDelete(id);
+  }
 }

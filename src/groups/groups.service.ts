@@ -9,33 +9,25 @@ import { Model } from 'mongoose';
 export class GroupsService {
 
   constructor(@InjectModel(Group.name) private readonly group: Model<Group>){};
-
-  async cretaeGroup(body: Group): Promise<Group> {
-    const group = new this.group(body);
-    return group.save();
-  }
     
   async getAllGroups() {
     return this.group.find().exec();
   }
 
-  // create(createGroupDto: CreateGroupDto) {
-  //   return 'This action adds a new group';
-  // }
+  async create(body: Group): Promise<Group> {
+    const group = new this.group(body);
+    return group.save();
+  }
 
-  // findAll() {
-  //   return `This action returns all groups`;
-  // }
+  async findOne(id: number): Promise<Group> {
+    return this.group.findById(id);
+  }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} group`;
-  // }
+  async update(id: number, group: Group): Promise<boolean> {
+    return this.group.findByIdAndUpdate(id, group, {new: true});
+  }
 
-  // update(id: number, updateGroupDto: UpdateGroupDto) {
-  //   return `This action updates a #${id} group`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} group`;
-  // }
+  async remove(id: number): Promise<boolean> {
+    return this.group.findByIdAndDelete(id);
+  }
 }

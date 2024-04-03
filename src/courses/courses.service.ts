@@ -9,34 +9,22 @@ import { Model } from 'mongoose';
 @Injectable()
 export class CoursesService {
 
-  constructor(@InjectModel(Course.name) private readonly course: Model<Group>){};
+  constructor(@InjectModel(Course.name) private readonly course: Model<Course>){};
 
-  async createCourse(body: Course): Promise<Course> {
+  async create(body: Course): Promise<Course> {
     const course = new this.course(body);
     return course.save();
   }
-    
-  async getAllCourse() {
-    return this.course.find().exec();
+
+  async findOne(id: number): Promise<Course> {
+    return this.course.findById(id);
   }
 
-  // create(createCourseDto: CreateCourseDto) {
-  //   return 'This action adds a new course';
-  // }
+  async update(id: number, course: Course): Promise<boolean> {
+    return this.course.findByIdAndUpdate(id, course, {new: true});
+  }
 
-  // findAll() {
-  //   return `This action returns all courses`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} course`;
-  // }
-
-  // update(id: number, updateCourseDto: UpdateCourseDto) {
-  //   return `This action updates a #${id} course`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} course`;
-  // }
+  async remove(id: number): Promise<boolean> {
+    return this.course.findByIdAndDelete(id);
+  }
 }

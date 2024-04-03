@@ -9,32 +9,20 @@ import { Model } from 'mongoose';
 export class AssetService {
   constructor(@InjectModel(Asset.name) private readonly asset: Model<Asset>){};
 
-  async createAsset(body: Asset): Promise<Asset> {
-    const asset = new this.asset(body);
-    return asset.save();
-  }
-    
-  async getAllAssets() {
-    return this.asset.find().exec();
+  async create(body: Asset): Promise<Asset> {
+    const createdAsset = new this.asset(body);
+    return createdAsset.save();
   }
 
-  // create(createAssetDto: CreateAssetDto) {
-  //   return 'This action adds a new asset';
-  // }
+  async findOne(id: number): Promise<Asset> {
+    return this.asset.findById(id);
+  }
 
-  // findAll() {
-  //   return `This action returns all asset`;
-  // }
+  async update(id: number, updatedAsset: Asset): Promise<boolean> {
+    return this.asset.findByIdAndUpdate(id, Asset, {new: true});
+  }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} asset`;
-  // }
-
-  // update(id: number, updateAssetDto: UpdateAssetDto) {
-  //   return `This action updates a #${id} asset`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} asset`;
-  // }
+  async remove(id: number): Promise<boolean> {
+    return this.asset.findByIdAndDelete(id);
+  }
 }

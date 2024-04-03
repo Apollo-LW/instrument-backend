@@ -10,32 +10,20 @@ export class UserService {
 
   constructor(@InjectModel(User.name) private readonly user: Model<User>){};
 
-  async createUser(body: User): Promise<User> {
-    const createUser = new this.user(body);
-    return createUser.save();
-  }
-    
-  async getAllUsers() {
-    return this.user.find().exec();
+  async create(body: User): Promise<User> {
+    const createTask = new this.user(body);
+    return createTask.save();
   }
 
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
+  async findOne(id: number): Promise<User> {
+    return this.user.findById(id);
+  }
 
-  // findAll() {
-  //   return `This action returns all user`;
-  // }
+  async update(id: number, user: User): Promise<boolean> {
+    return this.user.findByIdAndUpdate(id, user, {new: true});
+  }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async remove(id: number): Promise<boolean> {
+    return this.user.findByIdAndDelete(id);
+  }
 }
