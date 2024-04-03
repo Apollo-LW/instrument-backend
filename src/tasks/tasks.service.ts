@@ -9,11 +9,11 @@ export class TasksService {
     constructor(@InjectModel(Task.name) private readonly task: Model<Task>){};
 
     async createTask(body: Task): Promise<Task> {
-        const createNote = new this.task(body);
-        return createNote.save();
-      }
+      const task = new this.task(body);
+      return task.save();
+    }
     
-      async getAllTask() {
-        return this.task.find().exec();
-      }
+    async getAllTask() {
+      return this.task.find().exec();
+    }
 }

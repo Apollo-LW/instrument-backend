@@ -2,33 +2,44 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './schema/user.schema';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  postNote(@Body() body: User) {
+    return this.userService.createUser(body);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  getAllNotes() {
+    return this.userService.getAllUsers();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+  // @Post()
+  // create(@Body() createUserDto: CreateUserDto) {
+  //   return this.userService.create(createUserDto);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
+  // @Get()
+  // findAll() {
+  //   return this.userService.findAll();
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.userService.findOne(+id);
+  // }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //   return this.userService.update(+id, updateUserDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(+id);
+  // }
 }
