@@ -10,7 +10,7 @@ import {
 import { TasksService } from './tasks.service';
 import { Task } from './schema/tasks.schema';
 
-@Controller('tasks')
+@Controller('task')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
@@ -21,16 +21,16 @@ export class TasksController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+    return this.tasksService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() task: Task) {
-    return this.tasksService.update(+id, task);
+    return this.tasksService.update(id, task);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+    return this.tasksService.remove(id);
   }
 }

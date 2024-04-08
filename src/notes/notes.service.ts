@@ -15,15 +15,15 @@ export class NotesService {
     return createNote.save();
   }
 
-  async findOne(id: number): Promise<Note> {
+  async findOne(id: string): Promise<Note> {
     return this.note.findById(id);
   }
 
-  async update(id: number, note: Note): Promise<boolean> {
+  async update(id: string, note: Note): Promise<boolean> {
     return this.note.findByIdAndUpdate(id, note, {new: true});
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     return this.note.findByIdAndDelete(id);
   }
 }

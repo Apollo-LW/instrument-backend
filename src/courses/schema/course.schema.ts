@@ -33,6 +33,9 @@ export class Course {
     @Prop({type: Array<string>})
     courseTeachers: Array<string>;
 
+    @Prop()
+    isPublic: boolean;
+
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

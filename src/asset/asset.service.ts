@@ -14,15 +14,15 @@ export class AssetService {
     return createdAsset.save();
   }
 
-  async findOne(id: number): Promise<Asset> {
+  async findOne(id: string): Promise<Asset> {
     return this.asset.findById(id);
   }
 
-  async update(id: number, updatedAsset: Asset): Promise<boolean> {
-    return this.asset.findByIdAndUpdate(id, Asset, {new: true});
+  async update(id: string, updatedAsset: Asset): Promise<boolean> {
+    return this.asset.findByIdAndUpdate(id, updatedAsset, {new: true});
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     return this.asset.findByIdAndDelete(id);
   }
 }

@@ -19,15 +19,15 @@ export class GroupsService {
     return group.save();
   }
 
-  async findOne(id: number): Promise<Group> {
+  async findOne(id: string): Promise<Group> {
     return this.group.findById(id);
   }
 
-  async update(id: number, group: Group): Promise<boolean> {
+  async update(id: string, group: Group): Promise<boolean> {
     return this.group.findByIdAndUpdate(id, group, {new: true});
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     return this.group.findByIdAndDelete(id);
   }
 }

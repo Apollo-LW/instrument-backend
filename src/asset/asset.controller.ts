@@ -15,16 +15,16 @@ export class AssetController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.assetService.findOne(+id);
+    return this.assetService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() asset: Asset) {
-    return this.assetService.update(+id, asset);
+    return this.assetService.update(id, asset);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.assetService.remove(+id);
+    return this.assetService.remove(id);
   }
 }

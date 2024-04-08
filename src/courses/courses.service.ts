@@ -16,15 +16,15 @@ export class CoursesService {
     return course.save();
   }
 
-  async findOne(id: number): Promise<Course> {
+  async findOne(id: string): Promise<Course> {
     return this.course.findById(id);
   }
 
-  async update(id: number, course: Course): Promise<boolean> {
+  async update(id: string, course: Course): Promise<boolean> {
     return this.course.findByIdAndUpdate(id, course, {new: true});
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     return this.course.findByIdAndDelete(id);
   }
 }

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
+import { User } from './schema/user.schema';
 
 @Injectable()
 export class UserService {
@@ -15,15 +15,15 @@ export class UserService {
     return createTask.save();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: string): Promise<User> {
     return this.user.findById(id);
   }
 
-  async update(id: number, user: User): Promise<boolean> {
+  async update(id: string, user: User): Promise<boolean> {
     return this.user.findByIdAndUpdate(id, user, {new: true});
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     return this.user.findByIdAndDelete(id);
   }
 }

@@ -25,6 +25,9 @@ export class Group {
 
     @Prop({type: Array<string>})
     parentGroupsIds: Array<string>;
+
+    @Prop()
+    isPublic: boolean;
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

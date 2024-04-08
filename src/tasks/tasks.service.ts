@@ -13,15 +13,15 @@ export class TasksService {
       return createTask.save();
     }
   
-    async findOne(id: number): Promise<Task> {
+    async findOne(id: string): Promise<Task> {
       return this.task.findById(id);
     }
   
-    async update(id: number, task: Task): Promise<boolean> {
+    async update(id: string, task: Task): Promise<boolean> {
       return this.task.findByIdAndUpdate(id, task, {new: true});
     }
   
-    async remove(id: number): Promise<boolean> {
+    async remove(id: string): Promise<boolean> {
       return this.task.findByIdAndDelete(id);
     }
 }
