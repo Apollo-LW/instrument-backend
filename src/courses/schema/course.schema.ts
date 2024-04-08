@@ -1,10 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Date, HydratedDocument } from 'mongoose';
-import { User } from 'src/user/schema/user.schema';
+import { HydratedDocument } from 'mongoose';
 
 export type CourseDocument = HydratedDocument<Course>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Course {
     @Prop()
     name: string;
@@ -16,27 +15,7 @@ export class Course {
     createdAt: string; // TODO: change it to date
 
     @Prop()
-    lastUpdate: string; // TODO: change it to date
-
-    @Prop({type: Array<string>})
-    courseChapterIds: Array<string>;
-
-    @Prop({type: Array<string>})
-    courseParentIds: Array<string>;
-
-    @Prop({type: Array<string>})
-    courseAdminsIds: Array<string>;
-
-    @Prop({type: Array<string>})
-    courseStudentsIds: Array<string>;
-
-    @Prop({type: Array<string>})
-    courseTeachers: Array<string>;
-
-    @Prop()
     isPublic: boolean;
-
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
-
