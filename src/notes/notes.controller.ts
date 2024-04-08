@@ -10,33 +10,29 @@ import {
 import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
+import { Note } from './schema/notes.schema';
 
-@Controller('notes')
+@Controller('note')
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
   @Post()
-  create(@Body() createNoteDto: CreateNoteDto) {
-    return this.notesService.create(createNoteDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.notesService.findAll();
+  create(@Body() body: Note) {
+    return this.notesService.create(body);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.notesService.findOne(+id);
+    return this.notesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNoteDto: UpdateNoteDto) {
-    return this.notesService.update(+id, updateNoteDto);
+  update(@Param('id') id: string, @Body() note: Note) {
+    return this.notesService.update(id, note);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.notesService.remove(+id);
+    return this.notesService.remove(id);
   }
 }
