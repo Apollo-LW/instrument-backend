@@ -5,6 +5,9 @@ export type CourseNoteDocument = HydratedDocument<CourseNote>;
 
 @Schema()
 export class CourseNote {
+    @Prop({type: String, index: true, unique: true})
+    _id: string;
+    
     @Prop({required: true})
     courseId: string;
 
