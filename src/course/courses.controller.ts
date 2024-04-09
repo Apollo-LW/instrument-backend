@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CourseService } from './courses.service';
-import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './schema/course.schema';
 import { CourseUser } from './schema/courseuser.schema';
 import { CourseTask } from './schema/coursetask.schema';
@@ -9,7 +7,7 @@ import { CourseNote } from './schema/coursenote.schema';
 
 @Controller('course')
 export class CoursesController {
-  constructor(private readonly courseService: courseService) {}
+  constructor(private readonly courseService: CourseService) {}
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -29,6 +27,11 @@ export class CoursesController {
   @Post("/task")
   addTask(@Body() courseTask: CourseTask) {
     return this.courseService.addCourseTask(courseTask);
+  }
+
+  @Post("/note")
+  addNote(@Body() courseNote: CourseNote) {
+    return this.courseService.addCourseNote(courseNote);
   }
   
   @Patch(':id')
@@ -55,4 +58,10 @@ export class CoursesController {
   removeTask(@Param('id') courseTaskId: string) {
     return this.courseService.removeCourseTask(courseTaskId);
   }
+
+  @Delete("/note/:id")
+  removeNote(@Param('id') courseNoteId: string) {
+    return this.courseService.removeCourseNote(courseNoteId);
+  }
+
 }

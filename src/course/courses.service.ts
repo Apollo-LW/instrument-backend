@@ -75,4 +75,15 @@ export class CourseService {
   async removeCourseTask(courseTaskId: string): Promise<boolean> {
     return this.courseTask.findByIdAndDelete(courseTaskId);
   }
+
+  async addCourseNote(courseNote: CourseNote): Promise<CourseNote> {
+    const addNote = new this.courseNote(courseNote);
+    addNote._id = this.getCourseNoteId(courseNote);
+    return addNote.save();
+  }
+
+  async removeCourseNote(courseNoteId: string): Promise<boolean> {
+    return this.courseNote.findByIdAndDelete(courseNoteId);
+  }
+
 }
