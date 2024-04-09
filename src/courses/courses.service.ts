@@ -19,7 +19,11 @@ export class CoursesService {
   ){};
 
   static getCourseUserId(courseUser: CourseUser) : string {
-    return courseUser.courseId + courseUser.userId
+    return courseUser.courseId + courseUser.userId;
+  }
+
+  static getCourseTaskId(courseTask: CourseTask) : string {
+    return courseTask.courseId + courseTask.taskId;
   }
 
   async create(body: Course): Promise<Course> {
@@ -60,6 +64,16 @@ export class CoursesService {
   
   async getCourseTasks(id: string): Promise<Array<string>> {
     return this.courseTask.find({courseId: id});
+  }
+
+  async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
+    const addTask = new this.courseTask(courseTask);
+    addTask._id = CoursesService.getCourseTaskId(courseTask);
+    return addTask.save();
+  }
+
+  async removeCourseTask(courseTaskId: string): Promise<boolean> {
+    return this.courseTask.findByIdAndDelete(courseTaskId);
   }
 
   async getCourseNotes(id: string): Promise<Array<string>> {

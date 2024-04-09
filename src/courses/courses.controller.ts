@@ -4,6 +4,7 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './schema/course.schema';
 import { CourseUser } from './schema/courseuser.schema';
+import { CourseTask } from './schema/coursetask.schema';
 
 @Controller('course')
 export class CoursesController {
@@ -19,9 +20,14 @@ export class CoursesController {
     return this.coursesService.create(course);
   }
 
-  @Post("/adduser")
+  @Post("/user")
   addUser(@Body() courseUser: CourseUser) {
     return this.coursesService.addCourseUser(courseUser);
+  }
+
+  @Post("/task")
+  addTask(@Body() courseTask: CourseTask) {
+    return this.coursesService.addCourseTask(courseTask);
   }
 
   @Patch(':id')
@@ -29,7 +35,7 @@ export class CoursesController {
     return this.coursesService.update(id, course);
   }
 
-  @Patch("/updateuser")
+  @Patch("/user")
   updateUser(@Body() courseUser: CourseUser) {
     return this.coursesService.updateUserRole(courseUser);
   }
@@ -39,8 +45,13 @@ export class CoursesController {
     return this.coursesService.remove(id);
   }
 
-  @Delete("/removeuser/:id") 
+  @Delete("/user/:id") 
   removeUser(@Param('id') courseUserId: string) {
     return this.coursesService.removeUser(courseUserId);
+  }
+
+  @Delete("/task/:id")
+  removeTask(@Param('id') courseTaskId: string) {
+    return this.coursesService.removeCourseTask(courseTaskId);
   }
 }
