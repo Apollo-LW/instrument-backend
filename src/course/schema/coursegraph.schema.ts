@@ -5,13 +5,16 @@ export type CourseGraphDocument = HydratedDocument<CourseGraph>;
 
 @Schema()
 export class CourseGraph {
+    @Prop({type: String, index: true, unique: true})
+    _id: string;
+
     @Prop({required: true})
     courseId: string;
 
-    @Prop({required: true})
+    @Prop()
     parentCourseId: string;
 
-    @Prop({required: true})
+    @Prop()
     childCourseId: string;
 }
 

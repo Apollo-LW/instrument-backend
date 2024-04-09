@@ -102,4 +102,19 @@ export class CourseService {
     return this.courseAsset.findByIdAndDelete(courseAssetId);
   }
 
+  async addCourseChildren(currentCoureId: string, courseChildId: string): Promise<CourseGraph> {
+    const addCourseChild = new this.courseGraph({courseId: courseChildId, parentCourseId: currentCoureId});
+    addCourseChild._id = courseChildId + currentCoureId;
+
+    const addCourseParent = new this.courseGraph({courseId: currentCoureId, childCourseId: courseChildId});
+    addCourseParent._id = currentCoureId + courseChildId;
+
+    addCourseChild.save();
+    return addCourseParent.save();
+  }
+
+  async removeCourseChild(currentCoureId: string, courseChildId: string): Promise<boolean> {
+    await this.courseGraph.findByIdAndDelete(currentCoureId + courseChildId);
+    return this.courseGraph.findByIdAndDelete(courseChildId + currentCoureId);
+  }
 }
