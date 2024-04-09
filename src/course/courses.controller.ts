@@ -39,6 +39,11 @@ export class CoursesController {
   addAsset(@Body() courseAsset: CourseAsset) {
     return this.courseService.addCourseAsset(courseAsset);
   }
+
+  @Post("/child/:currentId/:childId")
+  addCourseChild(@Param('currentId') currentCourseId: string, @Param('childId') courseChildId: string) {
+    return this.courseService.addCourseChildren(currentCourseId, courseChildId);
+  }
   
   @Patch(':id')
   update(@Param('id') id: string, @Body() course: Course) {
@@ -74,4 +79,10 @@ export class CoursesController {
   removeAsset(@Param('id') courseAssetId: string) {
     return this.courseService.removeAsset(courseAssetId);
   }
+
+  @Delete("/child/:currentId/:childId")
+  removeCourseChild(@Param('currentId') currentCourseId: string, @Param('childId') courseChildId: string) {
+    return this.courseService.removeCourseChild(currentCourseId, courseChildId);
+  }
+  
 }
