@@ -4,16 +4,13 @@ import { URL, Url } from 'url';
 
 export type AssetDocument = HydratedDocument<Asset>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Asset {
     @Prop()
     name: string;
 
     @Prop()
     createdAt: string; // TODO: change it to date
-
-    @Prop()
-    lastUpdate: string; // TODO: change it to date
 
     @Prop()
     type: string; // TODO: change it to enum
