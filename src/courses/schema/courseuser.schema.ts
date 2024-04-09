@@ -11,6 +11,9 @@ export class CourseUser {
     @Prop({required: true})
     userId: string;
 
+    @Prop({type: String, index: true, unique: true})
+    _id: string;
+
     @Prop({required: true})
     role: string; // TODO: change to ENUM.
 }
