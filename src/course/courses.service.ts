@@ -8,7 +8,7 @@ import { CourseNote } from './schema/coursenote.schema';
 import { CourseGraph } from './schema/coursegraph.schema';
 
 @Injectable()
-export class CoursesService {
+export class CourseService {
 
   constructor(
     @InjectModel(Course.name) private readonly course: Model<Course>, 
@@ -18,12 +18,16 @@ export class CoursesService {
     @InjectModel(CourseGraph.name) private readonly courseGraph: Model<CourseGraph>
   ){};
 
-  static getCourseUserId(courseUser: CourseUser) : string {
+  getCourseUserId(courseUser: CourseUser) : string {
     return courseUser.courseId + courseUser.userId;
   }
 
-  static getCourseTaskId(courseTask: CourseTask) : string {
+  getCourseTaskId(courseTask: CourseTask) : string {
     return courseTask.courseId + courseTask.taskId;
+  }
+
+  getCourseNoteId(courseNote: CourseNote) : string {
+    return courseNote.courseId + courseNote.noteId;
   }
 
   async create(body: Course): Promise<Course> {
@@ -50,37 +54,25 @@ export class CoursesService {
 
   async addCourseUser(courseUser: CourseUser): Promise<CourseUser> {
     const addUser = new this.courseUser(courseUser);
-    addUser._id = CoursesService.getCourseUserId(courseUser);
+    addUser._id = this.getCourseUserId(courseUser);
     return addUser.save();
   }
 
   async updateUserRole(courseUser: CourseUser): Promise<boolean> {
-    return this.courseUser.findByIdAndUpdate(CoursesService.getCourseUserId(courseUser), courseUser, {new: true});
+    return this.courseUser.findByIdAndUpdate(this.getCourseUserId(courseUser), courseUser, {new: true});
   }
 
   async removeUser(courseUserId: string): Promise<boolean> {
     return this.courseUser.findByIdAndDelete(courseUserId);
   }
-  
-  async getCourseTasks(id: string): Promise<Array<string>> {
-    return this.courseTask.find({courseId: id});
-  }
 
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
     const addTask = new this.courseTask(courseTask);
-    addTask._id = CoursesService.getCourseTaskId(courseTask);
+    addTask._id = this.getCourseTaskId(courseTask);
     return addTask.save();
   }
 
   async removeCourseTask(courseTaskId: string): Promise<boolean> {
     return this.courseTask.findByIdAndDelete(courseTaskId);
-  }
-
-  async getCourseNotes(id: string): Promise<Array<string>> {
-    return this.courseNote.find({courseId: id});
-  }
-
-  async getCourseGraph(id: string): Promise<Array<string>> {
-    return this.courseGraph.find({courseId: id});
   }
 }
