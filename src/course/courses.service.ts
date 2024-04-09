@@ -6,6 +6,7 @@ import { CourseUser } from './schema/courseuser.schema';
 import { CourseTask } from './schema/coursetask.schema';
 import { CourseNote } from './schema/coursenote.schema';
 import { CourseGraph } from './schema/coursegraph.schema';
+import { CourseAsset } from './schema/courseasset.schema';
 
 @Injectable()
 export class CourseService {
@@ -15,7 +16,8 @@ export class CourseService {
     @InjectModel(CourseUser.name) private readonly courseUser: Model<CourseUser>,
     @InjectModel(CourseTask.name) private readonly courseTask: Model<CourseTask>,
     @InjectModel(CourseNote.name) private readonly courseNote: Model<CourseNote>,
-    @InjectModel(CourseGraph.name) private readonly courseGraph: Model<CourseGraph>
+    @InjectModel(CourseGraph.name) private readonly courseGraph: Model<CourseGraph>,
+    @InjectModel(CourseAsset.name) private readonly courseAsset: Model<CourseAsset>,
   ){};
 
   getCourseUserId(courseUser: CourseUser) : string {
@@ -28,6 +30,10 @@ export class CourseService {
 
   getCourseNoteId(courseNote: CourseNote) : string {
     return courseNote.courseId + courseNote.noteId;
+  }
+
+  getCourseAssetId(courseAsset: CourseAsset): string {
+    return courseAsset.courseId + courseAsset.assetId;
   }
 
   async create(body: Course): Promise<Course> {
@@ -84,6 +90,16 @@ export class CourseService {
 
   async removeCourseNote(courseNoteId: string): Promise<boolean> {
     return this.courseNote.findByIdAndDelete(courseNoteId);
+  }
+
+  async addCourseAsset(courseAsset: CourseAsset): Promise<CourseAsset> {
+    const addAsset =  new this.courseAsset(courseAsset);
+    addAsset._id = this.getCourseAssetId(courseAsset);
+    return addAsset.save();
+  }
+
+  async removeAsset(courseAssetId: string): Promise<boolean> {
+    return this.courseAsset.findByIdAndDelete(courseAssetId);
   }
 
 }

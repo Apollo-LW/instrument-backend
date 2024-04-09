@@ -4,6 +4,7 @@ import { Course } from './schema/course.schema';
 import { CourseUser } from './schema/courseuser.schema';
 import { CourseTask } from './schema/coursetask.schema';
 import { CourseNote } from './schema/coursenote.schema';
+import { CourseAsset } from './schema/courseasset.schema';
 
 @Controller('course')
 export class CoursesController {
@@ -32,6 +33,11 @@ export class CoursesController {
   @Post("/note")
   addNote(@Body() courseNote: CourseNote) {
     return this.courseService.addCourseNote(courseNote);
+  }
+
+  @Post("/asset")
+  addAsset(@Body() courseAsset: CourseAsset) {
+    return this.courseService.addCourseAsset(courseAsset);
   }
   
   @Patch(':id')
@@ -64,4 +70,8 @@ export class CoursesController {
     return this.courseService.removeCourseNote(courseNoteId);
   }
 
+  @Delete("/asset/:id")
+  removeAsset(@Param('id') courseAssetId: string) {
+    return this.courseService.removeAsset(courseAssetId);
+  }
 }
