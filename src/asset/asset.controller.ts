@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { AssetService } from './asset.service';
-import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
 import { Asset } from './schema/asset.schema';
+import { AssetUser } from './schema/assetuser.schema';
 
 @Controller('asset')
 export class AssetController {
@@ -21,6 +20,16 @@ export class AssetController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() asset: Asset) {
     return this.assetService.update(id, asset);
+  }
+
+  @Patch('/share')
+  share(@Body() assetUser: AssetUser) {
+    return this.assetService.share(assetUser);
+  }
+
+  @Delete("/share/:id/:userId")
+  unshare(@Param('id') assetId: string, @Param('userId') userId: string) {
+    return this.assetService.unshare(assetId, userId);
   }
 
   @Delete(':id')
