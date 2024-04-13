@@ -19,6 +19,11 @@ export class UserService {
     return this.user.findById(id);
   }
 
+  async findUserAuth(username: string): Promise<User> {
+    console.log(username);
+    return this.user.findOne({username: username});
+  }
+
   async update(id: string, user: User): Promise<boolean> {
     return this.user.findByIdAndUpdate(id, user, {new: true});
   }
