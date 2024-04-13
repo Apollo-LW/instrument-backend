@@ -15,6 +15,11 @@ export class CoursesController {
     return this.courseService.findOne(id);
   }
 
+  @Get("/user/:userId")
+  countUserCourses(@Param('userId') userId: string) {
+    return this.courseService.countUserCourses(userId);
+  }
+
   @Post()
   create(@Body() course: Course) {
     return this.courseService.create(course);

@@ -72,6 +72,10 @@ export class CourseService {
     return this.courseUser.findByIdAndDelete(courseUserId);
   }
 
+  async countUserCourses(userId: string): Promise<number> {
+    return this.courseUser.countDocuments({userId: userId});
+  }
+
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
     const addTask = new this.courseTask(courseTask);
     addTask._id = this.getCourseTaskId(courseTask);
