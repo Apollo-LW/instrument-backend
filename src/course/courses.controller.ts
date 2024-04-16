@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CourseService } from './courses.service';
 import { Course } from './schema/course.schema';
 import { CourseUser } from './schema/courseuser.schema';
 import { CourseTask } from './schema/coursetask.schema';
 import { CourseNote } from './schema/coursenote.schema';
 import { CourseAsset } from './schema/courseasset.schema';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('course')
+@UseGuards(AuthGuard('jwt'))
 export class CoursesController {
   constructor(private readonly courseService: CourseService) {}
 

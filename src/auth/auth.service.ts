@@ -38,6 +38,9 @@ async login(inputUser: User): Promise<{ accessToken: string }> {
     const user: User = await this.userService.findUserAuth(inputUsername);
     const inputPassword: string = inputUser.password;
 
+    console.log(inputUsername)
+    console.log(user)
+    console.log(inputPassword)
     if(user && await bcrypt.compare(inputPassword, user.password)) {
         const payload: JwtPayload = { username: inputUsername };
         const accessToken = this.jwtService.sign(payload);
