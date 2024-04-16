@@ -10,10 +10,9 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Multer Gridfs Storage')
-    .setDescription('GridFS storage engine for Multer to store uploaded files directly to MongoDb')
-    .setVersion('1.0')
-    .addTag('cats')
+    .setTitle('Instrument API')
+    .setDescription('One of the main APIs for instrument, this incldues the main CRUD operations as well as joins between differnt entities')
+    .setVersion('0.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
