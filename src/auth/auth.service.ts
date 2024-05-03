@@ -18,18 +18,19 @@ export class AuthService {
     ) {}
 
 async register(user: User): Promise<void> {
-
+    console.log(user);
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, salt);
 
     try {
         await this.userService.create(user);
     } catch (err) {
-    if (err.code === '23505') {
-        throw new ConflictException('Username already exists');
-    } else {
-        throw new InternalServerErrorException();
-    }
+        if (err.code === '23505') {
+            throw new ConflictException('Username already exists');
+        } else {
+            console.log(err);
+            throw new InternalServerErrorException();
+        }
     }
 }
 
