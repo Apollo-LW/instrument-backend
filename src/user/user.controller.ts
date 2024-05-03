@@ -1,12 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schema/user.schema';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
-@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -17,7 +14,8 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+    console.log(id);
+    return this.userService.findOne(id);  
   }
 
   @Get('/username/:username')
@@ -27,6 +25,9 @@ export class UserController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() user: User) {
+    console.log("Hello Hello patch user update: ")
+    console.log(id);
+    console.log(user);
     return this.userService.update(id, user);
   }
 

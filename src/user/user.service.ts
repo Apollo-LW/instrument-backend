@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schema/user.schema';
+import { Course } from 'src/course/schema/course.schema';
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,6 @@ export class UserService {
   }
 
   async findUserAuth(username: string): Promise<User> {
-    console.log(username);
     return this.user.findOne({username: username});
   }
 

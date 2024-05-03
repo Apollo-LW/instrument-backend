@@ -33,18 +33,15 @@ async register(user: User): Promise<void> {
     }
 }
 
-async login(inputUser: User): Promise<{ accessToken: string }> {
+async login(inputUser: User): Promise<{ accessToken: string, userId: string }> {
     const inputUsername: string = inputUser.username;
     const user: User = await this.userService.findUserAuth(inputUsername);
     const inputPassword: string = inputUser.password;
 
-    console.log(inputUsername)
-    console.log(user)
-    console.log(inputPassword)
     if(user && await bcrypt.compare(inputPassword, user.password)) {
         const payload: JwtPayload = { username: inputUsername };
         const accessToken = this.jwtService.sign(payload);
-        return { accessToken };
+        return { accessToken: accessToken, userId: user._id};
     } else {
         throw new UnauthorizedException('Please make sure your login credentials is correct.');
     }

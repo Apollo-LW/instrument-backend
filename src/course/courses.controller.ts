@@ -22,6 +22,11 @@ export class CoursesController {
     return this.courseService.countUserCourses(userId);
   }
 
+  @Get("/user/list/:userId")
+  getUserCourses(@Param('userId') userId: string) {
+    return this.courseService.getUserCourses(userId);
+  }
+
   @Post()
   create(@Body() course: Course) {
     return this.courseService.create(course);
