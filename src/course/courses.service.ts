@@ -76,6 +76,13 @@ export class CourseService {
     return this.courseUser.countDocuments({userId: userId});
   }
 
+  async getUserCourses(userId: string): Promise<Course[]> {
+    const userCourses: Array<Course> = new Array<Course>;
+    const data = await this.courseUser.find({userId: userId});
+    const coursesIds = data.map(x => x.courseId);
+    return Promise.all(coursesIds.map(courseId => this.findOne(courseId).then(course => course)));
+  }
+
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
     const addTask = new this.courseTask(courseTask);
     addTask._id = this.getCourseTaskId(courseTask);
