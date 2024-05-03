@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from './schema/user.schema';
 import { Course } from 'src/course/schema/course.schema';
 
@@ -12,6 +12,7 @@ export class UserService {
   constructor(@InjectModel(User.name) private readonly user: Model<User>){};
 
   async create(body: User): Promise<User> {
+    body._id = new Types.ObjectId().toString();
     const createTask = new this.user(body);
     return createTask.save();
   }

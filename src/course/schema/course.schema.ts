@@ -20,7 +20,7 @@ export class Course {
     @ApiProperty()
     @Expose()
     @Prop()
-    createdAt: string; // TODO: change it to date
+    createdAt: string;
 
     @ApiProperty()
     @Expose()
