@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from './schema/user.schema';
-import { Course } from 'src/course/schema/course.schema';
 
 @Injectable()
 export class UserService {
@@ -13,6 +10,12 @@ export class UserService {
 
   async create(body: User): Promise<User> {
     body._id = new Types.ObjectId().toString();
+    console.log(body._id)
+    const user = await this.findOne(body.username);
+    console.log(user);
+    if (user) {
+      return Promise.reject('user exist');
+    }
     const createTask = new this.user(body);
     return createTask.save();
   }

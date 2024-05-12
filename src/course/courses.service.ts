@@ -37,9 +37,17 @@ export class CourseService {
   }
 
   async create(body: Course): Promise<Course> {
+    body.createdAt = Date.now().toString();
     const createdCourse = new this.course(body);
     // TODO: add user that created the course.
-    return createdCourse.save();
+    const data = await createdCourse.save();
+    const courseUser = new CourseUser();
+    courseUser.courseId = data._id.toString();
+    courseUser.userId = data.creatorID;
+    courseUser.role = "owner";
+    const owener = await this.addCourseUser(courseUser);
+    console.log(owener);
+    return data;
   }
 
   async findOne(id: string): Promise<Course> {
