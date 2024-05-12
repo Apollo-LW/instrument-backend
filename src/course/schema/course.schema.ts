@@ -15,12 +15,32 @@ export class Course {
     @ApiProperty()
     @Expose()
     @Prop()
+    creatorID: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
     courseDescription: string;
 
     @ApiProperty()
     @Expose()
     @Prop()
     createdAt: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
+    startTime: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
+    endTime: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
+    repeatedDays: string[];
 
     @ApiProperty()
     @Expose()
