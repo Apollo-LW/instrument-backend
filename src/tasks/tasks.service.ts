@@ -2,15 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { Task } from './schema/tasks.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { TaskUser } from './schema/taskuser.schema';
 
 @Injectable()
 export class TasksService {
 
-    constructor(@InjectModel(Task.name) private readonly task: Model<Task>){};
+    constructor(
+      @InjectModel(Task.name) private readonly task: Model<Task>,
+      @InjectModel(TaskUser.name) private readonly taskUser: Model<TaskUser>,
+    ){};
+
+    getTaskUserId(taskUser: TaskUser): string {
+      return taskUser.taskId + taskUser.userId;
+    }
 
     async create(body: Task): Promise<Task> {
+      body.createdAt = Date.now().toString();
       const createTask = new this.task(body);
-      return createTask.save();
+      const data = await createTask.save();
+      const addUser = new TaskUser();
+      addUser.taskId = data._id.toString();
+      addUser.userId = body.creatorID;
+      addUser.role = "admin";
+      const owner = await this.addTaskUser(addUser);
+      return data;
+    }
+
+    async addTaskUser(taskUser: TaskUser): Promise<TaskUser> {
+      const addUser = new this.taskUser(taskUser);
+      addUser._id = this.getTaskUserId(taskUser);
+      return addUser.save();
+    }
+
+    async countUserTask(userId: string): Promise<number> {
+      return this.taskUser.countDocuments({userId: userId});
     }
   
     async findOne(id: string): Promise<Task> {

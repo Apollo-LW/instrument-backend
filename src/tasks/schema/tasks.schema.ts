@@ -3,10 +3,10 @@ import { Date, HydratedDocument } from 'mongoose';
 
 export type NoteDocument = HydratedDocument<Task>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Task {
     @Prop()
-    title: string;
+    name: string;
 
     @Prop({type: String})
     dueDate: Date;
@@ -15,22 +15,13 @@ export class Task {
     createdAt: string; // TODO: change it to date
 
     @Prop()
-    lastUpdate: string; // TODO: change it to date
-
-    @Prop()
-    type: string // TODO: change it to enum.
+    status: string // TODO: change it to enum.
 
     @Prop() 
-    content: string;
-
-    @Prop({type: Array<string>})
-    ownersIds: Array<string>;
-
-    @Prop({type: Array<string>})
-    viewersIds: Array<string>;
+    desciption: string;
 
     @Prop()
-    isPublic: boolean
+    creatorID: string;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
