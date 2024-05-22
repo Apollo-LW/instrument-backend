@@ -22,6 +22,9 @@ export class Task {
 
     @Prop()
     creatorID: string;
+
+    @Prop()
+    userRole: string;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

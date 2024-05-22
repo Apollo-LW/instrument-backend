@@ -31,8 +31,15 @@ export class TasksService {
     async getUserTasks(userId: string): Promise<Task[]> {
       const userTasks: Array<Task> = new Array<Task>;
       const data = await this.taskUser.find({userId: userId});
-      const taskIds = data.map(x => x.taskId);
-      return Promise.all(taskIds.map(taskId => this.findOne(taskId).then(task => task)));
+      return Promise.all(
+        data.map(
+          taskUser => this.findOne(taskUser.taskId)
+          .then(task => task).then(task => {
+              task.userRole = taskUser.role;
+              return task;
+            }
+          )
+      ));
     }
 
     async addTaskUser(taskUser: TaskUser): Promise<TaskUser> {
