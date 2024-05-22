@@ -18,6 +18,9 @@ export class TasksService {
 
     async create(body: Task): Promise<Task> {
       body.createdAt = Date.now().toString();
+      if (!body.status) {
+        body.status = "Not Started";
+      }
       const createTask = new this.task(body);
       const data = await createTask.save();
       const addUser = new TaskUser();

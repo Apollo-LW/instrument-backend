@@ -25,6 +25,9 @@ export class Task {
 
     @Prop()
     userRole: string;
+
+    @Prop()
+    isExam: boolean;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
