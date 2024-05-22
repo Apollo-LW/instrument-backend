@@ -28,6 +28,13 @@ export class TasksService {
       return data;
     }
 
+    async getUserTasks(userId: string): Promise<Task[]> {
+      const userTasks: Array<Task> = new Array<Task>;
+      const data = await this.taskUser.find({userId: userId});
+      const taskIds = data.map(x => x.taskId);
+      return Promise.all(taskIds.map(taskId => this.findOne(taskId).then(task => task)));
+    }
+
     async addTaskUser(taskUser: TaskUser): Promise<TaskUser> {
       const addUser = new this.taskUser(taskUser);
       addUser._id = this.getTaskUserId(taskUser);

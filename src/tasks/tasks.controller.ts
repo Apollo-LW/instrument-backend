@@ -24,6 +24,16 @@ export class TasksController {
     return this.tasksService.findOne(id);
   }
 
+  @Get('/user/:userId')
+  countUserTasks(@Param('userId') userId: string) {
+    return this.tasksService.countUserTask(userId);
+  }
+
+  @Get('/user/list/:userId')
+  getUserTasks(@Param('userId') userId: string) {
+    return this.tasksService.getUserTasks(userId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() task: Task) {
     return this.tasksService.update(id, task);

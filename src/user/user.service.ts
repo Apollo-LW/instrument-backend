@@ -10,9 +10,7 @@ export class UserService {
 
   async create(body: User): Promise<User> {
     body._id = new Types.ObjectId().toString();
-    console.log(body._id)
     const user = await this.findOne(body.username);
-    console.log(user);
     if (user) {
       return Promise.reject('user exist');
     }

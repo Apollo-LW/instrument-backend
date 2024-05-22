@@ -46,6 +46,11 @@ export class Course {
     @Expose()
     @Prop()
     isPublic: boolean;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
+    duration: number;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
