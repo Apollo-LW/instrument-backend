@@ -20,6 +20,11 @@ export class CourseTask {
     @ApiProperty()
     @Expose()
     @Prop({required: true})
+    userId: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop({required: true})
     taskId: string;
 }
 

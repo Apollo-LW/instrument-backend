@@ -7,6 +7,7 @@ import { CourseTask } from './schema/coursetask.schema';
 import { CourseNote } from './schema/coursenote.schema';
 import { CourseGraph } from './schema/coursegraph.schema';
 import { CourseAsset } from './schema/courseasset.schema';
+import { Task } from 'src/tasks/schema/tasks.schema';
 
 @Injectable()
 export class CourseService {
@@ -18,6 +19,7 @@ export class CourseService {
     @InjectModel(CourseNote.name) private readonly courseNote: Model<CourseNote>,
     @InjectModel(CourseGraph.name) private readonly courseGraph: Model<CourseGraph>,
     @InjectModel(CourseAsset.name) private readonly courseAsset: Model<CourseAsset>,
+    @InjectModel(Task.name) private readonly taskService: Model<Task>
   ){};
 
   getCourseUserId(courseUser: CourseUser) : string {
@@ -25,7 +27,7 @@ export class CourseService {
   }
 
   getCourseTaskId(courseTask: CourseTask) : string {
-    return courseTask.courseId + courseTask.taskId;
+    return courseTask.courseId + courseTask.taskId + courseTask.userId;
   }
 
   getCourseNoteId(courseNote: CourseNote) : string {
@@ -51,6 +53,11 @@ export class CourseService {
 
   async findOne(id: string): Promise<Course> {
     return this.course.findById(id);
+  }
+
+  async getCourseName(courseId: string): Promise<String> {
+    console.log(courseId);
+    return (await this.course.findById(courseId)).name;
   }
 
   async update(id: string, course: Course): Promise<boolean> {
@@ -84,10 +91,16 @@ export class CourseService {
   }
 
   async getUserCourses(userId: string): Promise<Course[]> {
-    const userCourses: Array<Course> = new Array<Course>;
     const data = await this.courseUser.find({userId: userId});
     const coursesIds = data.map(x => x.courseId);
     return Promise.all(coursesIds.map(courseId => this.findOne(courseId).then(course => course)));
+  }
+
+  async getUserCourseTasks(userId: string, courseId: string): Promise<Task[]> {
+    const data = await this.courseTask.find({userId: userId, courseId: courseId});
+    const tasksIds = data.map(x => x.taskId);
+    console.log(tasksIds);
+    return Promise.all(tasksIds.map(taskId => this.taskService.findById(taskId).then(task => task)));
   }
 
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
