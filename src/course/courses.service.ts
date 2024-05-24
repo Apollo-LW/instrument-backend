@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Course } from './schema/course.schema';
 import { Model, Types } from 'mongoose';
@@ -8,6 +8,7 @@ import { CourseNote } from './schema/coursenote.schema';
 import { CourseGraph } from './schema/coursegraph.schema';
 import { CourseAsset } from './schema/courseasset.schema';
 import { Task } from 'src/tasks/schema/tasks.schema';
+import { User } from 'src/user/schema/user.schema';
 
 @Injectable()
 export class CourseService {
@@ -19,7 +20,8 @@ export class CourseService {
     @InjectModel(CourseNote.name) private readonly courseNote: Model<CourseNote>,
     @InjectModel(CourseGraph.name) private readonly courseGraph: Model<CourseGraph>,
     @InjectModel(CourseAsset.name) private readonly courseAsset: Model<CourseAsset>,
-    @InjectModel(Task.name) private readonly taskService: Model<Task>
+    @InjectModel(Task.name) private readonly taskService: Model<Task>,
+    @InjectModel(User.name) private readonly userService: Model<User>,
   ){};
 
   getCourseUserId(courseUser: CourseUser) : string {
@@ -67,15 +69,27 @@ export class CourseService {
   async remove(id: string): Promise<boolean> {
     return this.course.findByIdAndDelete(id);
   }
+  
+  async getCourseUsers(courseId: string): Promise<String[]> {
+    //return this.courseUser.find({courseId: id});
+    const data = await this.courseUser.find({courseId: courseId});
+    const userIds = data.map(x => x.userId);
+    return Promise.all(userIds.map(userId => this.userService.findById(userId).then(user => user.username)));
+  }
 
-  async getCourseUsers(id: string): Promise<Array<string>> {
-    return this.courseUser.find({courseId: id});
+  async addCourseUsername(courseUser: CourseUser, username: string): Promise<CourseUser> {
+    const user = await this.userService.findOne({username: username});
+    if (user == null) {
+      throw new ConflictException('Username not found!!');
+    }
+    courseUser.userId = user._id;
+    return this.addCourseUser(courseUser);
   }
 
   async addCourseUser(courseUser: CourseUser): Promise<CourseUser> {
     const addUser = new this.courseUser(courseUser);
     addUser._id = this.getCourseUserId(courseUser);
-    return addUser.save();
+    return this.courseUser.findByIdAndUpdate(this.getCourseUserId(addUser), addUser, {new: true});
   }
 
   async updateUserRole(courseUser: CourseUser): Promise<boolean> {
@@ -91,6 +105,7 @@ export class CourseService {
   }
 
   async getUserCourses(userId: string): Promise<Course[]> {
+    console.log(userId);
     const data = await this.courseUser.find({userId: userId});
     const coursesIds = data.map(x => x.courseId);
     return Promise.all(coursesIds.map(courseId => this.findOne(courseId).then(course => course)));
