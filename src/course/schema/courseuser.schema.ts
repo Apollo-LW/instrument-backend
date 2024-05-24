@@ -6,6 +6,7 @@ import { HydratedDocument } from 'mongoose';
 export type CourseUserDocument = HydratedDocument<CourseUser>;
 
 @Schema()
+@Schema({ timestamps: true })
 export class CourseUser {
     @ApiProperty()
     @Expose()
@@ -26,6 +27,9 @@ export class CourseUser {
     @Expose()
     @Prop({required: true})
     role: string; // TODO: change to ENUM.
+
+    @Prop({auto: true})
+    updatedAt: string;
 }
 
 export const CourseUserSchema = SchemaFactory.createForClass(CourseUser);

@@ -10,6 +10,14 @@ import { CourseAsset } from './schema/courseasset.schema';
 import { Task } from 'src/tasks/schema/tasks.schema';
 import { User } from 'src/user/schema/user.schema';
 
+class UserCourseRole {
+  username: string;
+
+  role: string;
+
+  lastUpdated: string;
+}
+
 @Injectable()
 export class CourseService {
 
@@ -29,7 +37,7 @@ export class CourseService {
   }
 
   getCourseTaskId(courseTask: CourseTask) : string {
-    return courseTask.courseId + courseTask.taskId + courseTask.userId;
+    return courseTask.courseId + courseTask.taskId;
   }
 
   getCourseNoteId(courseNote: CourseNote) : string {
@@ -43,7 +51,6 @@ export class CourseService {
   async create(body: Course): Promise<Course> {
     body.createdAt = Date.now().toString();
     const createdCourse = new this.course(body);
-    // TODO: add user that created the course.
     const data = await createdCourse.save();
     const courseUser = new CourseUser();
     courseUser.courseId = data._id.toString();
@@ -69,12 +76,20 @@ export class CourseService {
   async remove(id: string): Promise<boolean> {
     return this.course.findByIdAndDelete(id);
   }
-  
-  async getCourseUsers(courseId: string): Promise<String[]> {
-    //return this.courseUser.find({courseId: id});
+
+  async getCourseUsers(courseId: string): Promise<UserCourseRole[]> {
     const data = await this.courseUser.find({courseId: courseId});
-    const userIds = data.map(x => x.userId);
-    return Promise.all(userIds.map(userId => this.userService.findById(userId).then(user => user.username)));
+    console.log(data);
+    const users = data.map(x => {
+      return {id: x.userId, role: x.role, updatedAt: x.updatedAt};
+    });
+    return Promise.all(users.map(user => this.userService.findById(user.id).then(userInfo => {
+      const courseUser = new UserCourseRole();
+      courseUser.username = userInfo.username;
+      courseUser.role = user.role;
+      courseUser.lastUpdated = user.updatedAt
+      return courseUser;
+    })));
   }
 
   async addCourseUsername(courseUser: CourseUser, username: string): Promise<CourseUser> {
@@ -87,9 +102,10 @@ export class CourseService {
   }
 
   async addCourseUser(courseUser: CourseUser): Promise<CourseUser> {
+    console.log(courseUser);
     const addUser = new this.courseUser(courseUser);
     addUser._id = this.getCourseUserId(courseUser);
-    return this.courseUser.findByIdAndUpdate(this.getCourseUserId(addUser), addUser, {new: true});
+    return this.courseUser.findByIdAndUpdate(this.getCourseUserId(addUser), addUser, {new: true, upsert: true, setDefaultsOnInsert: true});
   }
 
   async updateUserRole(courseUser: CourseUser): Promise<boolean> {
@@ -111,8 +127,14 @@ export class CourseService {
     return Promise.all(coursesIds.map(courseId => this.findOne(courseId).then(course => course)));
   }
 
+  async isAdmin(courseId: string, userId: string): Promise<boolean> {
+    console.log(courseId, userId);
+    const role = (await this.courseUser.findById(courseId + userId)).role;
+    return role === "admin" || role === "owner";
+  }
+
   async getUserCourseTasks(userId: string, courseId: string): Promise<Task[]> {
-    const data = await this.courseTask.find({userId: userId, courseId: courseId});
+    const data = await this.courseTask.find({courseId: courseId});
     const tasksIds = data.map(x => x.taskId);
     console.log(tasksIds);
     return Promise.all(tasksIds.map(taskId => this.taskService.findById(taskId).then(task => task)));
@@ -120,7 +142,12 @@ export class CourseService {
 
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
     const addTask = new this.courseTask(courseTask);
+    console.log(addTask);
     addTask._id = this.getCourseTaskId(courseTask);
+    const isAdmin = await this.isAdmin(courseTask.courseId, courseTask.userId);
+    if (!isAdmin) {
+      throw new ConflictException("You don't have permission to add tasks!!!");
+    }
     return addTask.save();
   }
 
