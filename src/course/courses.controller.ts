@@ -37,11 +37,6 @@ export class CoursesController {
     return this.courseService.getUserCourseTasks(userId, courseId);
   }
 
-  @Get("/name/:courseId")
-  getCouseName(@Param('courseId') courseId: string) {
-    return this.courseService.getCourseName(courseId);
-  }
-
   @Post()
   create(@Body() course: Course) {
     return this.courseService.create(course);

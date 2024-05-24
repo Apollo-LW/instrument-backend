@@ -64,11 +64,6 @@ export class CourseService {
     return this.course.findById(id);
   }
 
-  async getCourseName(courseId: string): Promise<String> {
-    console.log(courseId);
-    return (await this.course.findById(courseId)).name;
-  }
-
   async update(id: string, course: Course): Promise<boolean> {
     return this.course.findByIdAndUpdate(id, course, {new: true});
   }
@@ -79,7 +74,6 @@ export class CourseService {
 
   async getCourseUsers(courseId: string): Promise<UserCourseRole[]> {
     const data = await this.courseUser.find({courseId: courseId});
-    console.log(data);
     const users = data.map(x => {
       return {id: x.userId, role: x.role, updatedAt: x.updatedAt};
     });
@@ -102,7 +96,6 @@ export class CourseService {
   }
 
   async addCourseUser(courseUser: CourseUser): Promise<CourseUser> {
-    console.log(courseUser);
     const addUser = new this.courseUser(courseUser);
     addUser._id = this.getCourseUserId(courseUser);
     return this.courseUser.findByIdAndUpdate(this.getCourseUserId(addUser), addUser, {new: true, upsert: true, setDefaultsOnInsert: true});
@@ -121,14 +114,12 @@ export class CourseService {
   }
 
   async getUserCourses(userId: string): Promise<Course[]> {
-    console.log(userId);
     const data = await this.courseUser.find({userId: userId});
     const coursesIds = data.map(x => x.courseId);
     return Promise.all(coursesIds.map(courseId => this.findOne(courseId).then(course => course)));
   }
 
   async isAdmin(courseId: string, userId: string): Promise<boolean> {
-    console.log(courseId, userId);
     const role = (await this.courseUser.findById(courseId + userId)).role;
     return role === "admin" || role === "owner";
   }
@@ -136,13 +127,11 @@ export class CourseService {
   async getUserCourseTasks(userId: string, courseId: string): Promise<Task[]> {
     const data = await this.courseTask.find({courseId: courseId});
     const tasksIds = data.map(x => x.taskId);
-    console.log(tasksIds);
     return Promise.all(tasksIds.map(taskId => this.taskService.findById(taskId).then(task => task)));
   }
 
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
     const addTask = new this.courseTask(courseTask);
-    console.log(addTask);
     addTask._id = this.getCourseTaskId(courseTask);
     const isAdmin = await this.isAdmin(courseTask.courseId, courseTask.userId);
     if (!isAdmin) {
