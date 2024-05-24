@@ -10,22 +10,13 @@ export class Asset {
     name: string;
 
     @Prop()
-    createdAt: string; // TODO: change it to date
+    createdAt: string;
 
     @Prop()
-    type: string; // TODO: change it to enum
-
-    @Prop({type: URL})
-    url: Url;
+    creatorId: string;
 
     @Prop()
-    size: number;
-
-    @Prop({type: Array<string>})
-    ownersIds: Array<string>;
-
-    @Prop({type: Array<string>})
-    viewersIds: Array<string>;
+    assetId: string;
 
     @Prop()
     isPublic: boolean;

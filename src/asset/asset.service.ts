@@ -14,8 +14,15 @@ export class AssetService {
   ){};
 
   async create(body: Asset): Promise<Asset> {
+    body.createdAt = Date.now().toString();
     const createdAsset = new this.asset(body);
-    return createdAsset.save();
+    const data = await createdAsset.save();
+    const assetUser = new AssetUser();
+    assetUser.assetId = data._id.toString();
+    assetUser.role = "owner";
+    assetUser.userId = data.creatorId;
+    const owner = await this.share(assetUser);
+    return data;
   }
 
   async findOne(id: string): Promise<Asset> {
