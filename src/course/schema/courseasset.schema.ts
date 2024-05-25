@@ -20,6 +20,11 @@ export class CourseAsset {
     @ApiProperty()
     @Expose()
     @Prop({required: true})
+    userId: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop({required: true})
     assetId: string;
 }
 

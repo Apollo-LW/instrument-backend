@@ -32,9 +32,14 @@ export class CoursesController {
     return this.courseService.getCourseUsers(courseId);
   }
 
-  @Get("/task/list/:courseId")
+  @Get("/list/task/:courseId")
   getUserCourseTasks(@Param('userId') userId: string, @Param('courseId') courseId: string) {
     return this.courseService.getUserCourseTasks(userId, courseId);
+  }
+
+  @Get('/list/asset/:courseId')
+  getCourseAssets(@Param('courseId') courseId: string) {
+    return this.courseService.getCourseAssets(courseId);
   }
 
   @Post()
