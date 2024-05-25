@@ -14,7 +14,6 @@ export class AssetService {
   ){};
 
   async create(body: Asset): Promise<Asset> {
-    console.log(body);
     const createdAsset = new this.asset(body);
     const data = await createdAsset.save();
     const assetUser = new AssetUser();

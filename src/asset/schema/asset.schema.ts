@@ -23,6 +23,9 @@ export class Asset {
 
     @Prop()
     size: number;
+
+    @Prop()
+    fileLastModified: string;
 }
 
 export const AssetSchema = SchemaFactory.createForClass(Asset);
