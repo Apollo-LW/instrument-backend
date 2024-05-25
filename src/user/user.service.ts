@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from './schema/user.schema';
@@ -26,8 +26,20 @@ export class UserService {
     return this.user.findOne({username: username});
   }
 
-  async update(id: string, user: User): Promise<boolean> {
-    return this.user.findByIdAndUpdate(id, user, {new: true});
+  async update(id: string, user: User): Promise<User> {
+    try {
+      const usertmp = await this.user.findByIdAndUpdate(id, user, {new: true});
+      return usertmp;
+    } catch (error) {
+      if (error.codeName === 'DuplicateKey') {
+        if (error.keyValue.username)
+          throw new ConflictException("Username " + error.keyValue.username + " Already exist!!");
+        else if (error.keyValue.email)
+          throw new ConflictException("Email " + error.keyValue.email + " Already exist!!");
+      } else {
+        throw new ConflictException("Something went wrong  " + error.keyValue.toString());
+      }
+    }
   }
 
   async remove(id: string): Promise<boolean> {
