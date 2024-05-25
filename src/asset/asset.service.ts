@@ -14,8 +14,31 @@ export class AssetService {
   ){};
 
   async create(body: Asset): Promise<Asset> {
+    body.createdAt = Date.now().toString();
     const createdAsset = new this.asset(body);
-    return createdAsset.save();
+    const data = await createdAsset.save();
+    const assetUser = new AssetUser();
+    assetUser.assetId = data._id.toString();
+    assetUser.role = "owner";
+    assetUser.userId = data.creatorId;
+    const owner = await this.share(assetUser);
+    return data;
+  }
+
+  async getUserAssets(userId: string): Promise<Asset[]> {
+    const data = await this.assetUser.find({userId: userId});
+    return Promise.all(
+      data.map(assetUser => this.findOne(assetUser.assetId).then(asset => asset))
+    );
+  }
+
+  async getUserStorageUsage(userId: string): Promise<Number> {
+    const data = await this.assetUser.find({userId: userId});
+    const assetSizes = await Promise.all(
+      data
+      .map(assetUser => 
+      this.findOne(assetUser.assetId).then(asset => asset.size)));
+    return (assetSizes.reduce((usage, currentSize) => usage + currentSize, 0))*1e-6;
   }
 
   async findOne(id: string): Promise<Asset> {

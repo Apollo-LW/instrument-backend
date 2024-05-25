@@ -14,10 +14,10 @@ export class User {
     @Prop()
     lastName: string;
 
-    @Prop() 
+    @Prop({unique: true})
     email: string;
 
-    @Prop()
+    @Prop({unique: true})
     username: string;
 
     @Prop()

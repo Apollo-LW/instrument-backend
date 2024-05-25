@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Course } from './schema/course.schema';
 import { Model, Types } from 'mongoose';
@@ -7,6 +7,16 @@ import { CourseTask } from './schema/coursetask.schema';
 import { CourseNote } from './schema/coursenote.schema';
 import { CourseGraph } from './schema/coursegraph.schema';
 import { CourseAsset } from './schema/courseasset.schema';
+import { Task } from 'src/tasks/schema/tasks.schema';
+import { User } from 'src/user/schema/user.schema';
+
+class UserCourseRole {
+  username: string;
+
+  role: string;
+
+  lastUpdated: string;
+}
 
 @Injectable()
 export class CourseService {
@@ -18,6 +28,8 @@ export class CourseService {
     @InjectModel(CourseNote.name) private readonly courseNote: Model<CourseNote>,
     @InjectModel(CourseGraph.name) private readonly courseGraph: Model<CourseGraph>,
     @InjectModel(CourseAsset.name) private readonly courseAsset: Model<CourseAsset>,
+    @InjectModel(Task.name) private readonly taskService: Model<Task>,
+    @InjectModel(User.name) private readonly userService: Model<User>,
   ){};
 
   getCourseUserId(courseUser: CourseUser) : string {
@@ -39,13 +51,12 @@ export class CourseService {
   async create(body: Course): Promise<Course> {
     body.createdAt = Date.now().toString();
     const createdCourse = new this.course(body);
-    // TODO: add user that created the course.
     const data = await createdCourse.save();
     const courseUser = new CourseUser();
     courseUser.courseId = data._id.toString();
     courseUser.userId = data.creatorID;
     courseUser.role = "owner";
-    const owener = await this.addCourseUser(courseUser);
+    const owner = await this.addCourseUser(courseUser);
     return data;
   }
 
@@ -61,14 +72,33 @@ export class CourseService {
     return this.course.findByIdAndDelete(id);
   }
 
-  async getCourseUsers(id: string): Promise<Array<string>> {
-    return this.courseUser.find({courseId: id});
+  async getCourseUsers(courseId: string): Promise<UserCourseRole[]> {
+    const data = await this.courseUser.find({courseId: courseId});
+    const users = data.map(x => {
+      return {id: x.userId, role: x.role, updatedAt: x.updatedAt};
+    });
+    return Promise.all(users.map(user => this.userService.findById(user.id).then(userInfo => {
+      const courseUser = new UserCourseRole();
+      courseUser.username = userInfo.username;
+      courseUser.role = user.role;
+      courseUser.lastUpdated = user.updatedAt
+      return courseUser;
+    })));
+  }
+
+  async addCourseUsername(courseUser: CourseUser, username: string): Promise<CourseUser> {
+    const user = await this.userService.findOne({username: username});
+    if (user == null) {
+      throw new ConflictException('Username not found!!');
+    }
+    courseUser.userId = user._id;
+    return this.addCourseUser(courseUser);
   }
 
   async addCourseUser(courseUser: CourseUser): Promise<CourseUser> {
     const addUser = new this.courseUser(courseUser);
     addUser._id = this.getCourseUserId(courseUser);
-    return addUser.save();
+    return this.courseUser.findByIdAndUpdate(this.getCourseUserId(addUser), addUser, {new: true, upsert: true, setDefaultsOnInsert: true});
   }
 
   async updateUserRole(courseUser: CourseUser): Promise<boolean> {
@@ -84,15 +114,29 @@ export class CourseService {
   }
 
   async getUserCourses(userId: string): Promise<Course[]> {
-    const userCourses: Array<Course> = new Array<Course>;
     const data = await this.courseUser.find({userId: userId});
     const coursesIds = data.map(x => x.courseId);
     return Promise.all(coursesIds.map(courseId => this.findOne(courseId).then(course => course)));
   }
 
+  async isAdmin(courseId: string, userId: string): Promise<boolean> {
+    const role = (await this.courseUser.findById(courseId + userId)).role;
+    return role === "admin" || role === "owner";
+  }
+
+  async getUserCourseTasks(userId: string, courseId: string): Promise<Task[]> {
+    const data = await this.courseTask.find({courseId: courseId});
+    const tasksIds = data.map(x => x.taskId);
+    return Promise.all(tasksIds.map(taskId => this.taskService.findById(taskId).then(task => task)));
+  }
+
   async addCourseTask(courseTask: CourseTask): Promise<CourseTask> {
     const addTask = new this.courseTask(courseTask);
     addTask._id = this.getCourseTaskId(courseTask);
+    const isAdmin = await this.isAdmin(courseTask.courseId, courseTask.userId);
+    if (!isAdmin) {
+      throw new ConflictException("You don't have permission to add tasks!!!");
+    }
     return addTask.save();
   }
 

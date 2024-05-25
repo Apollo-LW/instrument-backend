@@ -27,14 +27,24 @@ export class CoursesController {
     return this.courseService.getUserCourses(userId);
   }
 
+  @Get("/list/users/:courseId")
+  getCourseUsers(@Param('courseId') courseId: string) {
+    return this.courseService.getCourseUsers(courseId);
+  }
+
+  @Get("/task/list/:courseId")
+  getUserCourseTasks(@Param('userId') userId: string, @Param('courseId') courseId: string) {
+    return this.courseService.getUserCourseTasks(userId, courseId);
+  }
+
   @Post()
   create(@Body() course: Course) {
     return this.courseService.create(course);
   }
 
-  @Post("/user")
-  addUser(@Body() courseUser: CourseUser) {
-    return this.courseService.addCourseUser(courseUser);
+  @Post("/user/:username")
+  addUser(@Body() courseUser: CourseUser, @Param('username') username) {
+    return this.courseService.addCourseUsername(courseUser, username);
   }
 
   @Post("/task")
