@@ -10,6 +10,7 @@ import { CourseGraph, CourseGraphSchema } from './schema/coursegraph.schema';
 import { CourseAsset, CourseAssetSchema } from './schema/courseasset.schema';
 import { Task, TaskSchema } from 'src/tasks/schema/tasks.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
+import { Asset, AssetSchema } from 'src/asset/schema/asset.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -21,6 +22,7 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
     { name: CourseAsset.name, schema: CourseAssetSchema },
     { name: Task.name, schema: TaskSchema },
     { name: User.name, schema: UserSchema },
+    { name: Asset.name, schema: AssetSchema }
   ])],
   controllers: [CoursesController],
   providers: [CourseService],

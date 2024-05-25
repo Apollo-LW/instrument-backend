@@ -9,6 +9,7 @@ import { CourseGraph } from './schema/coursegraph.schema';
 import { CourseAsset } from './schema/courseasset.schema';
 import { Task } from 'src/tasks/schema/tasks.schema';
 import { User } from 'src/user/schema/user.schema';
+import { Asset } from 'src/asset/schema/asset.schema';
 
 class UserCourseRole {
   username: string;
@@ -30,6 +31,7 @@ export class CourseService {
     @InjectModel(CourseAsset.name) private readonly courseAsset: Model<CourseAsset>,
     @InjectModel(Task.name) private readonly taskService: Model<Task>,
     @InjectModel(User.name) private readonly userService: Model<User>,
+    @InjectModel(Asset.name) private readonly assetServie: Model<Asset>,
   ){};
 
   getCourseUserId(courseUser: CourseUser) : string {
@@ -157,7 +159,26 @@ export class CourseService {
   async addCourseAsset(courseAsset: CourseAsset): Promise<CourseAsset> {
     const addAsset =  new this.courseAsset(courseAsset);
     addAsset._id = this.getCourseAssetId(courseAsset);
+    const isAdmin = await this.isAdmin(addAsset.courseId, addAsset.userId);
+    if (!isAdmin) {
+      throw new ConflictException("You don't have permission to add assets!!!");
+    }
     return addAsset.save();
+  }
+
+  async getCourseAssets(courseId: string): Promise<Asset[]> {
+    const data = await this.courseAsset.find({courseId: courseId});
+    const assetIds = data.map(x => x.assetId);
+    return Promise
+    .all(assetIds
+      .map(assetId => 
+        this.assetServie.findById(assetId)
+        .then(asset => this.userService.findById(asset.creatorId)
+        .then(user => {
+          asset.creatorId = user.username;
+          return asset;
+        })
+        .then(asset => asset))));
   }
 
   async removeAsset(courseAssetId: string): Promise<boolean> {

@@ -14,7 +14,7 @@ export class AssetService {
   ){};
 
   async create(body: Asset): Promise<Asset> {
-    body.createdAt = Date.now().toString();
+    console.log(body);
     const createdAsset = new this.asset(body);
     const data = await createdAsset.save();
     const assetUser = new AssetUser();
@@ -38,7 +38,7 @@ export class AssetService {
       data
       .map(assetUser => 
       this.findOne(assetUser.assetId).then(asset => asset.size)));
-    return (assetSizes.reduce((usage, currentSize) => usage + currentSize, 0))*1e-6;
+    return (assetSizes.reduce((usage, currentSize) => usage + currentSize, 0))*1e-9;
   }
 
   async findOne(id: string): Promise<Asset> {
