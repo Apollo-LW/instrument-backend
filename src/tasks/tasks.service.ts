@@ -32,7 +32,6 @@ export class TasksService {
     }
 
     async getUserTasks(userId: string): Promise<Task[]> {
-      const userTasks: Array<Task> = new Array<Task>;
       const data = await this.taskUser.find({userId: userId});
       return Promise.all(
         data.map(

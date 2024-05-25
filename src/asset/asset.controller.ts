@@ -17,6 +17,16 @@ export class AssetController {
     return this.assetService.findOne(id);
   }
 
+  @Get('/list/:userId')
+  getUserAssets(@Param('userId') userId: string) {
+    return this.assetService.getUserAssets(userId);
+  }
+
+  @Get('/size/:userId')
+  getUserStorageUsage(@Param('userId') userId: string) {
+    return this.assetService.getUserStorageUsage(userId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() asset: Asset) {
     return this.assetService.update(id, asset);

@@ -56,7 +56,7 @@ export class CourseService {
     courseUser.courseId = data._id.toString();
     courseUser.userId = data.creatorID;
     courseUser.role = "owner";
-    const owener = await this.addCourseUser(courseUser);
+    const owner = await this.addCourseUser(courseUser);
     return data;
   }
 

@@ -20,6 +20,9 @@ export class Asset {
 
     @Prop()
     isPublic: boolean;
+
+    @Prop()
+    size: number;
 }
 
 export const AssetSchema = SchemaFactory.createForClass(Asset);

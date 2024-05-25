@@ -25,6 +25,22 @@ export class AssetService {
     return data;
   }
 
+  async getUserAssets(userId: string): Promise<Asset[]> {
+    const data = await this.assetUser.find({userId: userId});
+    return Promise.all(
+      data.map(assetUser => this.findOne(assetUser.assetId).then(asset => asset))
+    );
+  }
+
+  async getUserStorageUsage(userId: string): Promise<Number> {
+    const data = await this.assetUser.find({userId: userId});
+    const assetSizes = await Promise.all(
+      data
+      .map(assetUser => 
+      this.findOne(assetUser.assetId).then(asset => asset.size)));
+    return (assetSizes.reduce((usage, currentSize) => usage + currentSize, 0))*1e-6;
+  }
+
   async findOne(id: string): Promise<Asset> {
     return this.asset.findById(id);
   }
