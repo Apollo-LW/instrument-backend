@@ -51,7 +51,9 @@ export class CourseService {
   }
 
   async create(body: Course): Promise<Course> {
-    body.createdAt = Date.now().toString();
+    body.createdAt = new Date().toISOString();
+    body.startDate = new Date(body.startDate).toISOString().substring(0, 10);
+    body.endDate = new Date(body.endDate).toISOString().substring(0, 10);
     const createdCourse = new this.course(body);
     const data = await createdCourse.save();
     const courseUser = new CourseUser();

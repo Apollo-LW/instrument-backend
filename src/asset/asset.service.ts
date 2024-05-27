@@ -1,19 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Asset } from './schema/asset.schema';
 import { Model } from 'mongoose';
 import { AssetUser } from './schema/assetuser.schema';
+import { Course } from 'src/course/schema/course.schema';
 
 @Injectable()
 export class AssetService {
+
+  readonly days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   constructor(
     @InjectModel(Asset.name) private readonly asset: Model<Asset>,
     @InjectModel(AssetUser.name) private readonly assetUser: Model<AssetUser>,
+    @InjectModel(Course.name) private readonly course: Model<Course>,
   ){};
 
   async create(body: Asset): Promise<Asset> {
+    const dateStr = new Date(body.fileLastModified).toISOString().substring(0, 10);
+    const date = new Date(body.fileLastModified);
+    const hours = date.getHours() % 12 || 12;
+    const min = date.getMinutes().toString().padStart(2, '0');
+    
+    console.log(body.fileLastModified);
+    console.log(dateStr);
+    console.log(`${hours}:${min}`); 
+    console.log(this.days[new Date(body.fileLastModified).getDay()])
+
     const createdAsset = new this.asset(body);
     const data = await createdAsset.save();
     const assetUser = new AssetUser();
@@ -21,6 +34,17 @@ export class AssetService {
     assetUser.role = "owner";
     assetUser.userId = data.creatorId;
     const owner = await this.share(assetUser);
+    const courses = await this.course.find({
+      startDate: {
+        $lte: dateStr
+      },
+      endDate: {
+        $gte: dateStr
+      }, 
+      repeatedDays: this.days[new Date(body.fileLastModified).getDay()],
+    });
+    
+    console.log(courses);
     return data;
   }
 
