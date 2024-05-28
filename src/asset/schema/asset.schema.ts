@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Date, HydratedDocument } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { URL, Url } from 'url';
 
 export type AssetDocument = HydratedDocument<Asset>;
@@ -23,6 +23,9 @@ export class Asset {
 
     @Prop()
     size: number;
+
+    @Prop()
+    fileLastModified: Date;
 }
 
 export const AssetSchema = SchemaFactory.createForClass(Asset);

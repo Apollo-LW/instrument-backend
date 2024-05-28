@@ -1,20 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Asset } from './schema/asset.schema';
 import { Model } from 'mongoose';
 import { AssetUser } from './schema/assetuser.schema';
+import { Course } from 'src/course/schema/course.schema';
+import { CourseSuggestion } from './schema/coursesuggestion.schema';
 
 @Injectable()
 export class AssetService {
+
+  readonly days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   constructor(
     @InjectModel(Asset.name) private readonly asset: Model<Asset>,
     @InjectModel(AssetUser.name) private readonly assetUser: Model<AssetUser>,
+    @InjectModel(Course.name) private readonly course: Model<Course>,
   ){};
 
-  async create(body: Asset): Promise<Asset> {
-    console.log(body);
+  async create(body: Asset): Promise<{asset: Asset, courseSuggestion: CourseSuggestion}> {
+    const dateStr = new Date(body.fileLastModified).toISOString().substring(0, 10);
+    const date = new Date(body.fileLastModified);
+    console.log(date.getHours(), date.getMinutes());
+    const time = date.getHours() * 60 + date.getMinutes();
+    
+    console.log(body.fileLastModified);
+    console.log(dateStr);
+    console.log(time); 
+    console.log(this.days[new Date(body.fileLastModified).getDay()])
+
     const createdAsset = new this.asset(body);
     const data = await createdAsset.save();
     const assetUser = new AssetUser();
@@ -22,7 +35,35 @@ export class AssetService {
     assetUser.role = "owner";
     assetUser.userId = data.creatorId;
     const owner = await this.share(assetUser);
-    return data;
+    const suggestedCourses = await this.course.find({
+      startDate: {
+        $lte: dateStr
+      },
+      endDate: {
+        $gte: dateStr
+      }, 
+      repeatedDays: this.days[new Date(body.fileLastModified).getDay()],
+    });
+    console.log(suggestedCourses);
+    console.log('============');
+    const filteredSuggestedCourses = suggestedCourses.filter(suggestedCourse => {
+      const courseStartTime = suggestedCourse.startTime;
+      const courseEndTime = suggestedCourse.endTime;
+      const tmpStart = courseStartTime.split(":");
+      console.log(tmpStart);
+      const courseStartTimeInMin = parseInt(tmpStart[0]) * 60 + parseInt(tmpStart[1]);
+      const tmpEnd = courseEndTime.split(":");
+      console.log(tmpEnd);
+      const courseEndTimeInMin = parseInt(tmpEnd[0]) * 60 + parseInt(tmpEnd[1]);
+      console.log(courseStartTimeInMin, courseEndTimeInMin, time);
+      return courseStartTimeInMin <= time && courseEndTimeInMin >= time;
+    });
+
+    console.log(filteredSuggestedCourses);
+    return {asset: data, courseSuggestion: {
+      assetId: data._id.toString(),
+      courses:filteredSuggestedCourses
+    }};
   }
 
   async getUserAssets(userId: string): Promise<Asset[]> {

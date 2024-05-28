@@ -30,6 +30,16 @@ export class Course {
     @ApiProperty()
     @Expose()
     @Prop()
+    startDate: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
+    endDate: string;
+
+    @ApiProperty()
+    @Expose()
+    @Prop()
     startTime: string;
 
     @ApiProperty()
