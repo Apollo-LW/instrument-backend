@@ -4,6 +4,7 @@ import { Asset } from './schema/asset.schema';
 import { Model } from 'mongoose';
 import { AssetUser } from './schema/assetuser.schema';
 import { Course } from 'src/course/schema/course.schema';
+import { CourseSuggestion } from './schema/coursesuggestion.schema';
 
 @Injectable()
 export class AssetService {
@@ -16,15 +17,15 @@ export class AssetService {
     @InjectModel(Course.name) private readonly course: Model<Course>,
   ){};
 
-  async create(body: Asset): Promise<Asset> {
+  async create(body: Asset): Promise<{asset: Asset, courseSuggestion: CourseSuggestion}> {
     const dateStr = new Date(body.fileLastModified).toISOString().substring(0, 10);
     const date = new Date(body.fileLastModified);
-    const hours = date.getHours() % 12 || 12;
-    const min = date.getMinutes().toString().padStart(2, '0');
+    console.log(date.getHours(), date.getMinutes());
+    const time = date.getHours() * 60 + date.getMinutes();
     
     console.log(body.fileLastModified);
     console.log(dateStr);
-    console.log(`${hours}:${min}`); 
+    console.log(time); 
     console.log(this.days[new Date(body.fileLastModified).getDay()])
 
     const createdAsset = new this.asset(body);
@@ -34,7 +35,7 @@ export class AssetService {
     assetUser.role = "owner";
     assetUser.userId = data.creatorId;
     const owner = await this.share(assetUser);
-    const courses = await this.course.find({
+    const suggestedCourses = await this.course.find({
       startDate: {
         $lte: dateStr
       },
@@ -43,9 +44,26 @@ export class AssetService {
       }, 
       repeatedDays: this.days[new Date(body.fileLastModified).getDay()],
     });
-    
-    console.log(courses);
-    return data;
+    console.log(suggestedCourses);
+    console.log('============');
+    const filteredSuggestedCourses = suggestedCourses.filter(suggestedCourse => {
+      const courseStartTime = suggestedCourse.startTime;
+      const courseEndTime = suggestedCourse.endTime;
+      const tmpStart = courseStartTime.split(":");
+      console.log(tmpStart);
+      const courseStartTimeInMin = parseInt(tmpStart[0]) * 60 + parseInt(tmpStart[1]);
+      const tmpEnd = courseEndTime.split(":");
+      console.log(tmpEnd);
+      const courseEndTimeInMin = parseInt(tmpEnd[0]) * 60 + parseInt(tmpEnd[1]);
+      console.log(courseStartTimeInMin, courseEndTimeInMin, time);
+      return courseStartTimeInMin <= time && courseEndTimeInMin >= time;
+    });
+
+    console.log(filteredSuggestedCourses);
+    return {asset: data, courseSuggestion: {
+      assetId: data._id.toString(),
+      courses:filteredSuggestedCourses
+    }};
   }
 
   async getUserAssets(userId: string): Promise<Asset[]> {
