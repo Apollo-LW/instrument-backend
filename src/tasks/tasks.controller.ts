@@ -34,6 +34,21 @@ export class TasksController {
     return this.tasksService.getUserTasks(userId);
   }
 
+  @Get('/user/exam/:userId')
+  getUserExams(@Param('userId') userId: string) {
+    return this.tasksService.getUserExams(userId);
+  }
+
+  @Get('/count/:userId')
+  countUserLastMonthTask(@Param('userId') userId: string) {
+    return this.tasksService.countUserTaskDoneLastMonth(userId);
+  }
+
+  @Get('/count/due/:userId')
+  countUserDueWeekTask(@Param('userId') userId: string) {
+    return this.tasksService.countUserTaskDueWeek(userId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() task: Task) {
     return this.tasksService.update(id, task);

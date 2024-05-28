@@ -27,6 +27,11 @@ export class AssetController {
     return this.assetService.getUserStorageUsage(userId);
   }
 
+  @Get('/count/:userId')
+  getUserNumberOfAssets(@Param('userId') userId: string) {
+    return this.assetService.countUserAssets(userId); 
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() asset: Asset) {
     return this.assetService.update(id, asset);

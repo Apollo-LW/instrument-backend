@@ -71,6 +71,11 @@ export class AssetService {
     return Promise.all(
       data.map(assetUser => this.findOne(assetUser.assetId).then(asset => asset))
     );
+  };
+
+  async countUserAssets(userId: string): Promise<Number> {
+    return this.assetUser.countDocuments({userId: userId});
+
   }
 
   async getUserStorageUsage(userId: string): Promise<Number> {

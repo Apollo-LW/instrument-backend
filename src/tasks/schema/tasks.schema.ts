@@ -28,6 +28,9 @@ export class Task {
 
     @Prop()
     isExam: boolean;
+
+    @Prop({type: Date, auto: true})
+    updatedAt: Date;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
